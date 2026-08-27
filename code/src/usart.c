@@ -11,9 +11,11 @@ void USART_Init1()
     GPIOA->CRH &= ~GPIO_CRH_CNF9_0;
     GPIOA->CRH |= GPIO_CRH_MODE9;
 
-    GPIOA->CRH &= ~GPIO_CRH_CNF10_1;
-    GPIOA->CRH |= GPIO_CRH_CNF10_0;
+    // PA10 RX: 上拉输入(10)，避免浮空噪声误触发中断
+    GPIOA->CRH |= GPIO_CRH_CNF10_1;
+    GPIOA->CRH &= ~GPIO_CRH_CNF10_0;
     GPIOA->CRH &= ~GPIO_CRH_MODE10;
+    GPIOA->ODR |= (1 << 10);   // 上拉
 
     // 设置波特率为115200
     USART1->BRR = 0x271;
@@ -53,5 +55,20 @@ void USART_Send_String(uint8_t *str, uint8_t len)
     if (len)
     {
         USART_Send_Byte('\n');
+    }
+}
+
+void USART1_IRQHandler(void)
+{
+    if (USART1->SR & USART_SR_RXNE)
+    {
+        // 读走数据，清RXNE标志（读DR自动清）
+        (void)USART1->DR;
+    }
+    if (USART1->SR & USART_SR_IDLE)
+    {
+        // 清IDLE标志：先读SR，再读DR
+        (void)USART1->SR;
+        (void)USART1->DR;
     }
 }

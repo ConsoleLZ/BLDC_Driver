@@ -5,16 +5,20 @@
 
 volatile uint16_t sysCnt;
 
-/* 100us 定时中断 (TIM4, F103C8T6 中容量确认存在的通用定时器) */
-void TIM4_IRQHandler(void)
+void TIM2_IRQHandler(void)
 {
-    TIM4->SR &= ~TIM_SR_UIF;
-    sysCnt++;
+    if (TIM2->SR & TIM_SR_UIF)
+    {
+        // 清除中断标志
+        TIM2->SR &= ~TIM_SR_UIF;
+        sysCnt++;
+    }
 }
 
 int main(void)
 {
     USART_Init1();
+    Timer2_Init();
     
     while (1)
     {
