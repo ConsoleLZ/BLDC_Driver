@@ -2,6 +2,7 @@
 #include "usart.h"
 #include "timer.h"
 #include "utils.h"
+#include "iic.h"
 
 volatile uint16_t sysCnt;
 
@@ -19,6 +20,7 @@ int main(void)
 {
     USART_Init1();
     Timer2_Init();
+    IIC_Init();
     
     while (1)
     {
