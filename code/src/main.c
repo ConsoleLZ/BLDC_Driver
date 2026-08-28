@@ -5,7 +5,7 @@
 #include "iic.h"
 #include "test.h"
 
-volatile uint16_t sysCnt, testCnt;
+volatile uint16_t sysCnt;
 
 // 100us中断一次
 void TIM2_IRQHandler(void)
@@ -30,11 +30,7 @@ int main(void)
         if (sysCnt >= 10)
         {
             sysCnt = 0;
-            if (++testCnt >= 500)
-            {
-                testCnt = 0;
-                test1();
-            }
+            test2();
         }
     }
 

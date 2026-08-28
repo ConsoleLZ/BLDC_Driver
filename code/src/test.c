@@ -1,4 +1,5 @@
 #include "test.h"
+#include "usart.h"
 
 void IO_Init(void)
 {
@@ -63,4 +64,50 @@ void test1(void)
     }
     if (++step >= 6)
         step = 0;
+}
+
+void test2(void)
+{
+    uint16_t angle = AS5600_ReadAngle();
+    uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
+    uint8_t step = e_angle / 600;
+
+    U_Enable;
+    V_Enable;
+    W_Enable;
+    switch (step)
+    {
+    case 0:
+        U_HIGH;
+        W_LOW;
+        V_Disable;
+        break;
+    case 1:
+        U_HIGH;
+        V_LOW;
+        W_Disable;
+        break;
+    case 2:
+        W_HIGH;
+        V_LOW;
+        U_Disable;
+        break;
+    case 3:
+        W_HIGH;
+        U_LOW;
+        V_Disable;
+        break;
+    case 4:
+        V_HIGH;
+        U_LOW;
+        W_Disable;
+        break;
+    case 5:
+        V_HIGH;
+        W_LOW;
+        U_Disable;
+        break;
+    default:
+        break;
+    }
 }

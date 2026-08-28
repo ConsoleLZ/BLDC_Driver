@@ -2,6 +2,8 @@
 #define __TEST_H
 #include <stm32f10x.h>
 
+#define POLE_PAIRS 7
+
 #define U_HIGH GPIOA->ODR |= GPIO_ODR_ODR0
 #define V_HIGH GPIOA->ODR |= GPIO_ODR_ODR1
 #define W_HIGH GPIOA->ODR |= GPIO_ODR_ODR2
@@ -20,5 +22,6 @@
 
 void IO_Init(void);
 void test1(void);
+void test2(void);
 
 #endif
