@@ -3,10 +3,10 @@
 #include "timer.h"
 #include "utils.h"
 #include "iic.h"
-#include "as5600.h"
 
-volatile uint16_t sysCnt, testCnt;
+volatile uint16_t sysCnt;
 
+// 100us中断一次
 void TIM2_IRQHandler(void)
 {
     if (TIM2->SR & TIM_SR_UIF)
@@ -28,14 +28,6 @@ int main(void)
         if (sysCnt >= 10)
         {
             sysCnt = 0;
-            if(++testCnt>=500){
-                testCnt = 0;
-
-                u16 angle = AS5600_ReadRawAngle();
-                USART_Send_Byte(0x66);
-                USART_Send_Byte(angle >> 8);
-                USART_Send_Byte(angle & 0xff);
-            }
         }
     }
 
