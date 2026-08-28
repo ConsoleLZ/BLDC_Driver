@@ -3,8 +3,9 @@
 #include "timer.h"
 #include "utils.h"
 #include "iic.h"
+#include "test.h"
 
-volatile uint16_t sysCnt;
+volatile uint16_t sysCnt, testCnt;
 
 // 100us中断一次
 void TIM2_IRQHandler(void)
@@ -22,12 +23,18 @@ int main(void)
     USART_Init1();
     Timer2_Init();
     IIC_Init();
-    
+    IO_Init();
+
     while (1)
     {
         if (sysCnt >= 10)
         {
             sysCnt = 0;
+            if (++testCnt >= 500)
+            {
+                testCnt = 0;
+                test1();
+            }
         }
     }
 
