@@ -111,3 +111,52 @@ void test2(void)
         break;
     }
 }
+
+void test3(void)
+{
+    uint16_t angle = AS5600_ReadAngle();
+    uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
+    uint8_t step = e_angle / 600;
+
+    U_Enable;
+    V_Enable;
+    W_Enable;
+    TIM2->CCR1 = 0;
+    TIM2->CCR2 = 0;
+    TIM2->CCR3 = 0;
+    switch (step)
+    {
+    case 0:
+        U_HIGH;
+        W_LOW;
+        V_Disable;
+        break;
+    case 1:
+        U_HIGH;
+        V_LOW;
+        W_Disable;
+        break;
+    case 2:
+        W_HIGH;
+        V_LOW;
+        U_Disable;
+        break;
+    case 3:
+        W_HIGH;
+        U_LOW;
+        V_Disable;
+        break;
+    case 4:
+        V_HIGH;
+        U_LOW;
+        W_Disable;
+        break;
+    case 5:
+        V_HIGH;
+        W_LOW;
+        U_Disable;
+        break;
+    default:
+        break;
+    }
+}

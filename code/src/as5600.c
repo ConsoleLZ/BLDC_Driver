@@ -46,5 +46,5 @@ uint16_t AS5600_ReadRawAngle(void)
 
 uint16_t AS5600_ReadAngle(void)
 {
-    return (uint16_t)((uint32_t)AS5600_ReadRawAngle() * 3600 / 4096);
+    return (uint16_t)(AS5600_ReadRawAngle() * 3600 / 4096);
 }

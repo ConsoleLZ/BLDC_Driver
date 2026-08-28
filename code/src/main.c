@@ -8,12 +8,11 @@
 volatile uint16_t sysCnt;
 
 // 100us中断一次
-void TIM2_IRQHandler(void)
+void TIM4_IRQHandler(void)
 {
-    if (TIM2->SR & TIM_SR_UIF)
+    if (TIM4->SR & TIM_SR_UIF)
     {
-        // 清除中断标志
-        TIM2->SR &= ~TIM_SR_UIF;
+        TIM4->SR &= ~TIM_SR_UIF;  // 清除中断标志
         sysCnt++;
     }
 }
@@ -22,6 +21,7 @@ int main(void)
 {
     USART_Init1();
     Timer2_Init();
+    Timer4_Init();
     IIC_Init();
     IO_Init();
 
