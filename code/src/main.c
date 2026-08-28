@@ -23,13 +23,14 @@ int main(void)
     Timer2_Init();
     Timer4_Init();
     IIC_Init();
+    IO_Init();
 
     while (1)
     {
         if (sysCnt >= 10)
         {
             sysCnt = 0;
-            // test3();
+            test3();
         }
     }
 

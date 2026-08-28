@@ -5,12 +5,12 @@ void IO_Init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 
-    GPIOA->CRL &= ~GPIO_CRL_CNF0;
-    GPIOA->CRL |= GPIO_CRL_MODE0;
-    GPIOA->CRL &= ~GPIO_CRL_CNF1;
-    GPIOA->CRL |= GPIO_CRL_MODE1;
-    GPIOA->CRL &= ~GPIO_CRL_CNF2;
-    GPIOA->CRL |= GPIO_CRL_MODE2;
+    // GPIOA->CRL &= ~GPIO_CRL_CNF0;
+    // GPIOA->CRL |= GPIO_CRL_MODE0;
+    // GPIOA->CRL &= ~GPIO_CRL_CNF1;
+    // GPIOA->CRL |= GPIO_CRL_MODE1;
+    // GPIOA->CRL &= ~GPIO_CRL_CNF2;
+    // GPIOA->CRL |= GPIO_CRL_MODE2;
 
     GPIOA->CRL &= ~GPIO_CRL_CNF4;
     GPIOA->CRL |= GPIO_CRL_MODE4;
@@ -127,32 +127,32 @@ void test3(void)
     switch (step)
     {
     case 0:
-        TIM2->CCR1 = 1000;
+        TIM2->CCR1 = 1800;
         W_LOW;
         V_Disable;
         break;
     case 1:
-        TIM2->CCR1 = 1000;
+        TIM2->CCR1 = 1800;
         V_LOW;
         W_Disable;
         break;
     case 2:
-        TIM2->CCR3 = 1000;
+        TIM2->CCR3 = 1800;
         V_LOW;
         U_Disable;
         break;
     case 3:
-        TIM2->CCR3 = 1000;
+        TIM2->CCR3 = 1800;
         U_LOW;
         V_Disable;
         break;
     case 4:
-        TIM2->CCR2 = 1000;
+        TIM2->CCR2 = 1800;
         U_LOW;
         W_Disable;
         break;
     case 5:
-        TIM2->CCR2 = 1000;
+        TIM2->CCR2 = 1800;
         W_LOW;
         U_Disable;
         break;
