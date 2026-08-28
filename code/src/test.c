@@ -127,32 +127,32 @@ void test3(void)
     switch (step)
     {
     case 0:
-        U_HIGH;
+        TIM2->CCR1 = 1000;
         W_LOW;
         V_Disable;
         break;
     case 1:
-        U_HIGH;
+        TIM2->CCR1 = 1000;
         V_LOW;
         W_Disable;
         break;
     case 2:
-        W_HIGH;
+        TIM2->CCR3 = 1000;
         V_LOW;
         U_Disable;
         break;
     case 3:
-        W_HIGH;
+        TIM2->CCR3 = 1000;
         U_LOW;
         V_Disable;
         break;
     case 4:
-        V_HIGH;
+        TIM2->CCR2 = 1000;
         U_LOW;
         W_Disable;
         break;
     case 5:
-        V_HIGH;
+        TIM2->CCR2 = 1000;
         W_LOW;
         U_Disable;
         break;

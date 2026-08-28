@@ -48,7 +48,7 @@ void Timer2_Init(void)
     TIM2->CR1 &= ~TIM_CR1_DIR;
 
     // 配置通道1（PA0）的捕获比较寄存器（占空比）
-    TIM2->CCR1 = 0;
+    TIM2->CCR1 = 1800;
     // 通道1 配置为输出
     TIM2->CCMR1 &= ~TIM_CCMR1_CC1S;
     // 输出比较模式：PWM1 (110)
@@ -61,7 +61,7 @@ void Timer2_Init(void)
     TIM2->CCER &= ~TIM_CCER_CC1P;
 
     // 配置通道2（PA1）
-    TIM2->CCR2 = 0;
+    TIM2->CCR2 = 1800;
     TIM2->CCMR1 &= ~TIM_CCMR1_CC2S;
     TIM2->CCMR1 |= TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1;
     TIM2->CCMR1 &= ~TIM_CCMR1_OC2M_0;
@@ -70,7 +70,7 @@ void Timer2_Init(void)
     TIM2->CCER &= ~TIM_CCER_CC2P;
 
     // 配置通道3（PA2）（使用 CCMR2 寄存器）
-    TIM2->CCR3 = 0;
+    TIM2->CCR3 = 1800;
     TIM2->CCMR2 &= ~TIM_CCMR2_CC3S;
     TIM2->CCMR2 |= TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1;
     TIM2->CCMR2 &= ~TIM_CCMR2_OC3M_0;
