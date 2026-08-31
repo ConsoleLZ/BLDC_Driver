@@ -2,6 +2,8 @@
 #include "usart.h"
 #include "as5600.h"
 
+static int16_t sin_table[SIN_TABLE_SIZE];
+
 void IO_Init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
@@ -162,16 +164,37 @@ void test3(void)
     }
 }
 
+// 正弦表生成
+void sin_generate(void)
+{
+    /* 步长 d = 2π/4096:  cos(d)≈0.999999,  sin(d)≈0.001509 */
+    // 注意：如果单片机空间不够用，这里最好是减少步长的精度，因为这里会生成一个大数组
+    // 由于浮点单片机不好算，这里转换成整型去算
+    const int16_t cosd = 32767;    /* 0.999999 * 32768 */
+    const int16_t sind = 49;      /* 0.001509 * 32768 */
+
+    // 初始时的θ为0°
+    int16_t sinθ = 0;
+    int16_t cosθ = 32767;
+    int32_t s_next, c_next;
+
+    for(uint16_t i=0; i<SIN_TABLE_SIZE; i++){
+        sin_table[i] = sinθ;
+
+        s_next = (int32_t)(sinθ * cosd) + (int32_t)(cosθ * sind);
+        c_next = (int32_t)(cosθ * cosd) - (int32_t)(sinθ * sind);
+
+        sinθ = (int16_t)(s_next >> 15);
+        cosθ = (int16_t)(c_next >> 15);
+    }
+}
+
 void test_spwm(void)
 {
     uint16_t angle = AS5600_ReadAngle();
-    uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS + 450) % 3600);
+    uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
 
     U_Enable;
     V_Enable;
     W_Enable;
-
-    TIM2->CCR1 = e_angle;                      // A相：0°
-    TIM2->CCR2 = (e_angle + 1200) % 3600;      // B相：+120°
-    TIM2->CCR3 = (e_angle + 2400) % 3600;      // C相：+240°
 }
