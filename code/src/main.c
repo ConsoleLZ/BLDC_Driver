@@ -30,17 +30,13 @@ int main(void)
 
     while (1)
     {
-        if (sysCnt >= 30000)
+        if (sysCnt >= 60000)
         {
             sysCnt = 0;
-            // test_spwm();
             for (uint16_t i = 0; i < SIN_TABLE_SIZE; i++)
             {
-                USART_Send_Byte(0xaa);
-                USART_Send_Byte(sin_table[i] >> 8);
-                USART_Send_Byte(sin_table[i] & 0xff);
+                printf("%5u,%6d\r\n", i, sin_table[i]);
             }
-            
         }
     }
 

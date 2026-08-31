@@ -58,6 +58,20 @@ void USART_Send_String(uint8_t *str, uint8_t len)
     }
 }
 
+// printf重定向: Keil用fputc, GCC/newlib用_write
+int fputc(int ch, FILE *f)
+{
+    USART_Send_Byte((uint8_t)ch);
+    return ch;
+}
+
+int _write(int file, char *ptr, int len)
+{
+    for (int i = 0; i < len; i++)
+        USART_Send_Byte((uint8_t)ptr[i]);
+    return len;
+}
+
 void USART1_IRQHandler(void)
 {
     if (USART1->SR & USART_SR_RXNE)
