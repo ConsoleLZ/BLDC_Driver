@@ -24,5 +24,6 @@ void IO_Init(void);
 void test1(void);
 void test2(void);
 void test3(void);
+void test_spwm(void);
 
 #endif

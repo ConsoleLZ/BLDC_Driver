@@ -30,7 +30,7 @@ int main(void)
         if (sysCnt >= 10)
         {
             sysCnt = 0;
-            test3();
+            test_spwm();
         }
     }
 

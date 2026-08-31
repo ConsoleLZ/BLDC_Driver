@@ -1,5 +1,6 @@
 #include "test.h"
 #include "usart.h"
+#include "as5600.h"
 
 void IO_Init(void)
 {
@@ -159,4 +160,18 @@ void test3(void)
     default:
         break;
     }
+}
+
+void test_spwm(void)
+{
+    uint16_t angle = AS5600_ReadAngle();
+    uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS + 450) % 3600);
+
+    U_Enable;
+    V_Enable;
+    W_Enable;
+
+    TIM2->CCR1 = e_angle;                      // A相：0°
+    TIM2->CCR2 = (e_angle + 1200) % 3600;      // B相：+120°
+    TIM2->CCR3 = (e_angle + 2400) % 3600;      // C相：+240°
 }
