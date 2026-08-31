@@ -3,7 +3,6 @@
 #include <stm32f10x.h>
 
 #define POLE_PAIRS 7
-#define SIN_TABLE_SIZE  4096
 
 #define U_HIGH GPIOA->ODR |= GPIO_ODR_ODR0
 #define V_HIGH GPIOA->ODR |= GPIO_ODR_ODR1
@@ -25,6 +24,7 @@ void IO_Init(void);
 void test1(void);
 void test2(void);
 void test3(void);
+void sin_generate(int16_t *sin_table, uint16_t table_size);
 void test_spwm(void);
 
 #endif
