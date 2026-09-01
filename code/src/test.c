@@ -213,11 +213,14 @@ void test_spwm(void)
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
     uint8_t idx = (uint8_t)((uint32_t)e_angle * 256U / 3600U);
 
+    // 偏移值
+    uint8_t offset = 172; // 108刚好对齐(此时电机不旋转)，需要在这个基础上再偏移90度 +64
+
     U_Enable;
     V_Enable;
     W_Enable;
 
-    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U) % 256], 1800);
-    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V) % 256], 1800);
-    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W) % 256], 1800);
+    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], 1500);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], 1500);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], 1500);
 }
