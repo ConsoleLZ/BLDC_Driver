@@ -188,6 +188,9 @@ void sin_generate(int16_t *sin_table, uint16_t table_size)
     }
 }
 
+// SPWM参数
+int16_t sin_table[SIN_TABLE_SIZE];
+
 void test_spwm(void)
 {
     uint16_t angle = AS5600_ReadAngle();
