@@ -186,6 +186,12 @@ void sin_generate(int16_t *sin_table, uint16_t table_size)
         sinx = (int16_t)(s_next >> 15);
         cosx = (int16_t)(c_next >> 15);
     }
+
+    /* 强制修正关键点, 消除256步累计误差: 0°/90°/180°/270° */
+    sin_table[0]   = 0;
+    sin_table[64]  = 32767;
+    sin_table[128] = 0;
+    sin_table[192] = -32767;
 }
 
 // SPWM参数
