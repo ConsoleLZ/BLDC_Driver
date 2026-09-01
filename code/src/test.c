@@ -210,17 +210,17 @@ uint16_t sin_to_pwm(int16_t q15sin, uint16_t amplitude)
 void test_spwm(void)
 {
     uint16_t angle = AS5600_ReadAngle();
-    uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
-    uint8_t idx = (uint8_t)((uint32_t)e_angle * 256U / 3600U);
+    uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD);
+    uint8_t idx = (uint8_t)((uint32_t)e_angle * SIN_TABLE_SIZE / PWM_PERIOD);
 
     // 偏移值
-    uint8_t offset = 172; // 108刚好对齐(此时电机不旋转)，需要在这个基础上再偏移90度 +64
+    uint8_t offset = 172; // 108刚好对齐(此时电机不旋转)，如何得到：设置idx为0的时候，记录此时的电角度值, 需要在这个基础上再偏移90度 +64
 
     U_Enable;
     V_Enable;
     W_Enable;
 
-    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], 1500);
-    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], 1500);
-    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], 1500);
+    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
 }
