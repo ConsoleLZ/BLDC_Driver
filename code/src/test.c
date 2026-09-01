@@ -211,13 +211,13 @@ void test_spwm(void)
 {
     uint16_t angle = AS5600_ReadAngle();
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
-    uint8_t idx = (uint8_t)(e_angle >> 4);
+    uint8_t idx = (uint8_t)((uint32_t)e_angle * 256U / 3600U);
 
     U_Enable;
     V_Enable;
     W_Enable;
 
-    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U) % 255], 1800);
-    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V) % 255], 1800);
-    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W) % 255], 1800);
+    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U) % 256], 1800);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V) % 256], 1800);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W) % 256], 1800);
 }
