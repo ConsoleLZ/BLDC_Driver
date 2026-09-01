@@ -201,8 +201,15 @@ void test_spwm(void)
 {
     uint16_t angle = AS5600_ReadAngle();
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
+    /* 90°超前(64步)使定子磁场领先转子, 产生最大转矩驱动旋转; 反转改为 -64 */
+    uint8_t idx = (uint8_t)(e_angle >> 4);
 
     U_Enable;
     V_Enable;
     W_Enable;
+
+    /* 三相120°相位差, Q15正弦值映射到0~3600占空比 */
+    TIM2->CCR1 = ((uint32_t)(sin_table[idx & 0xFF]          + 32768) * 3600) >> 16;
+    TIM2->CCR2 = ((uint32_t)(sin_table[(idx +  85) & 0xFF]   + 32768) * 3600) >> 16;
+    TIM2->CCR3 = ((uint32_t)(sin_table[(idx + 170) & 0xFF]   + 32768) * 3600) >> 16;
 }
