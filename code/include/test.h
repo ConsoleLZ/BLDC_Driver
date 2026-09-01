@@ -5,6 +5,11 @@
 #define POLE_PAIRS 7
 #define SIN_TABLE_SIZE 256
 
+// 三相索引偏移 (120°/360° * 256 = 85.3, 取 85 / 171)
+#define IDX_OFF_U       0
+#define IDX_OFF_V       85
+#define IDX_OFF_W       171
+
 #define U_HIGH GPIOA->ODR |= GPIO_ODR_ODR0
 #define V_HIGH GPIOA->ODR |= GPIO_ODR_ODR1
 #define W_HIGH GPIOA->ODR |= GPIO_ODR_ODR2

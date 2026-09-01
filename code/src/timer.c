@@ -43,7 +43,7 @@ void Timer2_Init(void)
 
     /* 定时器配置 */
     TIM2->PSC = 0;
-    TIM2->ARR = 3600 - 1;
+    TIM2->ARR = PWM_PERIOD - 1;
     // 计数方向：向上
     TIM2->CR1 &= ~TIM_CR1_DIR;
 

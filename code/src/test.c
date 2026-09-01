@@ -1,6 +1,7 @@
 #include "test.h"
 #include "usart.h"
 #include "as5600.h"
+#include "timer.h"
 
 void IO_Init(void)
 {
@@ -197,19 +198,26 @@ void sin_generate(int16_t *sin_table, uint16_t table_size)
 // SPWM参数
 int16_t sin_table[SIN_TABLE_SIZE];
 
+uint16_t sin_to_pwm(int16_t q15sin, uint16_t amplitude)
+{
+    int32_t tmp = ((int32_t)q15sin * amplitude) >> 15;
+    tmp += (PWM_PERIOD / 2);
+    if (tmp < 1) tmp = 1;
+    if (tmp >= (int32_t)PWM_PERIOD) tmp = PWM_PERIOD - 1;
+    return (uint16_t)tmp;
+}
+
 void test_spwm(void)
 {
     uint16_t angle = AS5600_ReadAngle();
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % 3600);
-    /* 90°超前(64步)使定子磁场领先转子, 产生最大转矩驱动旋转; 反转改为 -64 */
     uint8_t idx = (uint8_t)(e_angle >> 4);
 
     U_Enable;
     V_Enable;
     W_Enable;
 
-    /* 三相120°相位差, Q15正弦值映射到0~3600占空比 */
-    TIM2->CCR1 = ((uint32_t)(sin_table[idx & 0xFF]          + 32768) * 3600) >> 16;
-    TIM2->CCR2 = ((uint32_t)(sin_table[(idx +  85) & 0xFF]   + 32768) * 3600) >> 16;
-    TIM2->CCR3 = ((uint32_t)(sin_table[(idx + 170) & 0xFF]   + 32768) * 3600) >> 16;
+    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U) % 255], 1800);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V) % 255], 1800);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W) % 255], 1800);
 }
