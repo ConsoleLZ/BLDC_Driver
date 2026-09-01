@@ -3,7 +3,7 @@
 #include <stm32f10x.h>
 
 #define POLE_PAIRS 7
-#define SIN_TABLE_SIZE 4096
+#define SIN_TABLE_SIZE 256
 
 #define U_HIGH GPIOA->ODR |= GPIO_ODR_ODR0
 #define V_HIGH GPIOA->ODR |= GPIO_ODR_ODR1

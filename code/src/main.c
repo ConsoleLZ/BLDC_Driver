@@ -28,10 +28,14 @@ int main(void)
 
     while (1)
     {
-        if (sysCnt >= 10)
+        if (sysCnt >= 30000)
         {
             sysCnt = 0;
-            test_spwm();
+            // test_spwm();
+            for (uint8_t i = 0; i < (SIN_TABLE_SIZE - 1); i++)
+            {
+                printf("index:%d, value:%d\n", i, sin_table[i]);
+            }
         }
     }
 
