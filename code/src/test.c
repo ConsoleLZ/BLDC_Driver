@@ -214,7 +214,19 @@ void test_spwm(void)
     uint8_t idx = (uint8_t)((uint32_t)e_angle * SIN_TABLE_SIZE / PWM_PERIOD);
 
     // 偏移值
-    uint8_t offset = 172; // 108刚好对齐(此时电机不旋转)，如何得到：设置idx为0的时候，记录此时的电角度值, 需要在这个基础上再偏移90度 +64
+    /*
+    电流记录
+    offset = 0 -> 0.195A
+    offset = 32 -> 0.432A
+    offset = 230 -> 0.147A
+    offset = 238 -> 0.107A
+    offset = 239 -> 0.102A
+    offset = 240 -> 0.105A
+    offset = 242 -> 0.115A
+    offset = 250 -> 0.156A
+    offset = 255 -> 0.187A
+    */
+    uint8_t offset = 239; // 108刚好对齐(此时电机不旋转)，如何得到：设置idx为0的时候，记录此时的电角度值, 需要在这个基础上再偏移90度 +64
 
     U_Enable;
     V_Enable;
