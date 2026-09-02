@@ -198,13 +198,13 @@ void sin_generate(int16_t *sin_table, uint16_t table_size)
 // SPWM参数
 int16_t sin_table[SIN_TABLE_SIZE];
 
-uint16_t sin_to_pwm(int16_t q15sin, uint16_t amplitude)
+uint16_t sin_to_pwm(int16_t sin, uint16_t amplitude)
 {
-    int32_t tmp = ((int32_t)q15sin * amplitude) >> 15;
-    tmp += (PWM_PERIOD / 2);
-    if (tmp < 1) tmp = 1;
-    if (tmp >= (int32_t)PWM_PERIOD) tmp = PWM_PERIOD - 1;
-    return (uint16_t)tmp;
+    /* sin∈[-32767,32767] -> duty = PWM_PERIOD/2 ± amplitude, 中心对齐SPWM */
+    int32_t duty = (int32_t)PWM_PERIOD / 2 + ((int32_t)sin * amplitude) / 32768;
+    if (duty < 0) duty = 0;
+    if (duty >= PWM_PERIOD) duty = PWM_PERIOD - 1;
+    return (uint16_t)duty;
 }
 
 void test_spwm(void)
