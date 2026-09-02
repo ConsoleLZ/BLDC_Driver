@@ -5,7 +5,7 @@
 #define POLE_PAIRS 7
 #define SIN_TABLE_SIZE 256
 
-#define SPEED_DUTY 900 // 速度
+#define SPEED_DUTY 1800 // 速度
 
 // 三相索引偏移 (120°/360° * 256 = 85.3, 取 85 / 171)
 #define IDX_OFF_U       0
