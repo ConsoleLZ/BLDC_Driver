@@ -31,8 +31,8 @@ int main(void)
         if (sysCnt >= 10)
         {
             sysCnt = 0;
-            test_spwm();
         }
+        test_spwm();
     }
 
     return 0;
