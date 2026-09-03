@@ -197,6 +197,7 @@ void sin_generate(int16_t *sin_table, uint16_t table_size)
 
 // SPWM参数
 int16_t sin_table[SIN_TABLE_SIZE];
+uint16_t speed_duty = 0; // 软起动: 从0爬升到SPEED_DUTY
 
 uint16_t sin_to_pwm(int16_t sin, uint16_t amplitude)
 {
@@ -232,7 +233,7 @@ void test_spwm(void)
     V_Enable;
     W_Enable;
 
-    TIM2->CCR1 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
-    TIM2->CCR2 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
-    TIM2->CCR3 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
+    TIM2->CCR1 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], speed_duty);
 }

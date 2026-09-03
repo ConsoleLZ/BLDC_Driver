@@ -5,7 +5,9 @@
 #define POLE_PAIRS 7
 #define SIN_TABLE_SIZE 256
 
-#define SPEED_DUTY 1500 // 速度
+#define SPEED_DUTY 1500 // 目标速度
+#define SPEED_RAMP_STEP 2 // 软起动每ms增量, 调大=加速起, 调小=更软
+extern uint16_t speed_duty; // 当前速度, 软起动用
 
 // 三相索引偏移 (120°/360° * 256 = 85.3, 取 85 / 171)
 #define IDX_OFF_U       0

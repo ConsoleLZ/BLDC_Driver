@@ -31,6 +31,8 @@ int main(void)
         if (sysCnt >= 10)
         {
             sysCnt = 0;
+            if (speed_duty < SPEED_DUTY)
+                speed_duty += SPEED_RAMP_STEP; // 软起动爬坡, ~750ms到顶
         }
         test_spwm();
     }
