@@ -226,13 +226,13 @@ void test_spwm(void)
     offset = 250 -> 0.156A
     offset = 255 -> 0.187A
     */
-    uint8_t offset = 239;
+    uint16_t offset = 276;
 
     U_Enable;
     V_Enable;
     W_Enable;
 
-    TIM2->CCR1 = sin_to_pwm(sin_table[(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
-    TIM2->CCR2 = sin_to_pwm(sin_table[(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
-    TIM2->CCR3 = sin_to_pwm(sin_table[(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
+    TIM2->CCR1 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], SPEED_DUTY);
 }
