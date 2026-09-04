@@ -214,19 +214,8 @@ void test_spwm(void)
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD);
     uint8_t idx = (uint8_t)((uint32_t)e_angle * SIN_TABLE_SIZE / PWM_PERIOD);
 
-    // 偏移值
-    /*
-    电流记录
-    offset = 0 -> 0.195A
-    offset = 32 -> 0.432A
-    offset = 230 -> 0.147A
-    offset = 238 -> 0.107A
-    offset = 239 -> 0.102A
-    offset = 240 -> 0.105A
-    offset = 242 -> 0.115A
-    offset = 250 -> 0.156A
-    offset = 255 -> 0.187A
-    */
+
+    // 设置idx和offset都是0，然后读取此时的电角度(uint8_t)((uint32_t)e_angle * SIN_TABLE_SIZE / PWM_PERIOD)这个值是145，使用256-145+64得到offset
     uint16_t offset = 175;
 
     U_Enable;
