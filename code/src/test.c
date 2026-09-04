@@ -227,7 +227,7 @@ void test_spwm(void)
     offset = 250 -> 0.156A
     offset = 255 -> 0.187A
     */
-    uint16_t offset = 276;
+    uint16_t offset = 175;
 
     U_Enable;
     V_Enable;
