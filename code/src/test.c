@@ -202,7 +202,7 @@ uint16_t speed_duty = 0; // 软起动: 从0爬升到SPEED_DUTY
 uint16_t sin_to_pwm(int16_t sin, uint16_t amplitude)
 {
     /* sin∈[-32767,32767] -> duty = PWM_PERIOD/2 ± amplitude, 中心对齐SPWM */
-    int32_t duty = (int32_t)PWM_PERIOD / 2 + ((int32_t)sin * amplitude) / 32768;
+    int32_t duty = (PWM_PERIOD / 2) + (((int32_t)sin * amplitude) / 32768);
     if (duty < 0) duty = 0;
     if (duty >= PWM_PERIOD) duty = PWM_PERIOD - 1;
     return (uint16_t)duty;
