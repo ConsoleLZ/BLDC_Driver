@@ -34,7 +34,7 @@ int main(void)
             if (speed_duty < SPEED_DUTY)
                 speed_duty += SPEED_RAMP_STEP; // 软起动爬坡, ~750ms到顶
         }
-        test_spwm();
+        test_vector();
     }
 
     return 0;

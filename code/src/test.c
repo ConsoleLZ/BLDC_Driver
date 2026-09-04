@@ -208,7 +208,7 @@ uint16_t sin_to_pwm(int16_t sin, uint16_t amplitude)
     return (uint16_t)duty;
 }
 
-void test_spwm(void)
+void test_vector(void)
 {
     uint16_t angle = AS5600_ReadAngle();
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD);

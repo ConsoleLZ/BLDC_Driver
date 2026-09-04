@@ -37,6 +37,6 @@ void test1(void);
 void test2(void);
 void test3(void);
 void sin_generate(int16_t *sin_table, uint16_t table_size);
-void test_spwm(void);
+void test_vector(void);
 
 #endif
