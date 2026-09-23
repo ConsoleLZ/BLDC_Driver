@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "iic.h"
 #include "test.h"
+#include "adc.h"
+#include <stdio.h>
 
 volatile uint16_t sysCnt;
 
@@ -24,6 +26,7 @@ int main(void)
     Timer4_Init();
     IIC_Init();
     IO_Init();
+    ADC1_Init();
     sin_generate(sin_table, SIN_TABLE_SIZE);
 
     while (1)
@@ -33,6 +36,11 @@ int main(void)
             sysCnt = 0;
             if (speed_duty < SPEED_DUTY)
                 speed_duty += SPEED_RAMP_STEP; // 软起动爬坡, ~750ms到顶
+
+            uint16_t mv3 = ADC_mV(ADC_CH_PA3);
+            uint16_t mv7 = ADC_mV(ADC_CH_PA7);
+            printf("PA3=%u.%03uV PA7=%u.%03uV\r\n",
+                   mv3 / 1000, mv3 % 1000, mv7 / 1000, mv7 % 1000);
         }
         test_vector();
     }
