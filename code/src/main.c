@@ -37,12 +37,12 @@ int main(void)
             if (speed_duty < SPEED_DUTY)
                 speed_duty += SPEED_RAMP_STEP; // 软起动爬坡, ~750ms到顶
 
-            uint16_t mv3 = ADC_mV(ADC_CH_PA3);
-            uint16_t mv7 = ADC_mV(ADC_CH_PA7);
-            printf("PA3=%u.%03uV PA7=%u.%03uV\r\n",
-                   mv3 / 1000, mv3 % 1000, mv7 / 1000, mv7 % 1000);
+            int16_t u = ADC_mV(ADC_CH_PA3) - 1650;
+            int16_t v = ADC_mV(ADC_CH_PA7) - 1650;
+            int16_t w = 0 - u - v;
+            printf("u = %d, v = %d, w = %d\r\n", u, v, w);
+            test_vector();
         }
-        test_vector();
     }
 
     return 0;
