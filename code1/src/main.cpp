@@ -7,6 +7,16 @@
 //   默认复用 Wire：PB6=SCL, PB7=SDA（STM32F103 Arduino core 默认引脚）
 MagneticSensorI2C sensor = MagneticSensorI2C::AS5600();
 
+// 电机定义
+BLDCMotor motor = BLDCMotor(7, 2.55, 220);
+
+// 驱动器
+// BLDCDriver3PWM driver = BLDCDriver3PWM(
+//     PA1, PA1, PA2,    // PWM 引脚
+//     PA4, PA5, PA6,      // 使能引脚
+//     12.0           // 电源电压
+// );
+
 void setup()
 {
   Serial1.begin(115200); // 调试串口：PA9=TX / PA10=RX
