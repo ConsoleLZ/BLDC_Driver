@@ -2,67 +2,64 @@
 #include <Wire.h>
 #include "SimpleFOC.h"
 
-// AS5600 I2C 磁编码器
-//   库内 AS5600_I2C 配置：chip_address=0x36 / 12bit / angle_register=0x0C
-//   默认复用 Wire：PB6=SCL, PB7=SDA
+// AS5600 I2C磁编码器
 MagneticSensorI2C sensor = MagneticSensorI2C::AS5600();
 
-// 2804 电机：7 极对 / 相电阻 2.55Ω / KV 220（规格书参数）
+// 2804电机：7极对 / 相电阻2.55Ω / KV220
 BLDCMotor motor = BLDCMotor(7, 2.55, 220);
 
-// DRV8313 三相驱动：3PWM 模式（互补低侧由 DRV8313 内部生成）
-//   PWM：PA0/PA1/PA2 → IN1/IN2/IN3
-//   EN ：PA4/PA5/PA6 → EN1/EN2/EN3
+// DRV8313 3PWM驱动
+// PWM：PA0 PA1 PA2 → IN1 IN2 IN3
+// EN：PA4 PA5 PA6 → EN1 EN2 EN3
 BLDCDriver3PWM driver = BLDCDriver3PWM(PA0, PA1, PA2, PA4, PA5, PA6);
 
-// 开环目标速度（rad/s），正负方向，5 rad/s ≈ 48 RPM
-float target_velocity = 5.0f;
+float target_velocity = 5.0f; // rad/s，目标转速
 
-void setup()
-{
-  Serial1.begin(115200); // 调试串口：PA9=TX / PA10=RX
-  sensor.init();         // AS5600 初始化
-  analogReadResolution(12); // STM32 ADC 默认 12 位
+void setup() {
+  Serial1.begin(115200);
+  sensor.init();
+  analogReadResolution(12);
 
-  // —— 驱动器初始化 ——
-  driver.voltage_power_supply = 12.0f; // 电机电源 12V（规格书额定）
+  // 驱动器配置
+  driver.voltage_power_supply = 12.0f;
+  driver.pwm_frequency = 35000;
   driver.init();
   motor.linkDriver(&driver);
+  motor.linkSensor(&sensor);  // 绑定编码器【闭环核心】
 
-  // —— 开环速度模式 ——
+  // FOC参数
   motor.voltage_limit = 2.0f;
-  motor.controller = MotionControlType::velocity_openloop;
+  motor.foc_modulation = FOCModulationType::SinePWM;
+
+  // 速度环PI调参（初始预设值，后续微调）
+  motor.PID_velocity.P = 0.25f;
+  motor.PID_velocity.I = 5.0f;
+  motor.PID_velocity.D = 0.001f;
+  motor.PID_velocity.output_ramp = 100.0f; // 加速度限幅，抑制冲击噪声
+  motor.LPF_velocity = 0.05f; // 速度低通滤波【修正大小写】
+
+  motor.controller = MotionControlType::velocity; // 闭环速度模式
+
   motor.init();
-  motor.initFOC(); // 开环模式不进行对齐，但需初始化内部状态
+  motor.initFOC(); // 闭环必须！上电相位对齐，电机会小幅转动
   motor.enable();
 
-  Serial1.println("Motor open-loop ready.");
+  Serial1.println("Closed-loop velocity ready.");
 }
 
-void loop()
-{
-  // —— 开环速度控制（高频调用让运动平滑）——
-  motor.move(target_velocity); // 设置目标速度
-  motor.loopFOC();             // 开环下生成三相 PWM
+void loop() {
+  motor.move(target_velocity);
+  motor.loopFOC();
 
-  // —— 串口监控（100ms 一次，避免刷屏）——
-  // static unsigned long last_print = 0;
-  // if (millis() - last_print >= 100)
-  // {
-  //   last_print = millis();
-
-  //   float deg = sensor.getSensorAngle() * 180.0f / PI; // AS5600 角度
-  //   uint16_t raw_pa3 = analogRead(PA3);
-  //   uint16_t raw_pa7 = analogRead(PA7);
-  //   float v_pa3 = raw_pa3 * 3.3f / 4095.0f;
-  //   float v_pa7 = raw_pa7 * 3.3f / 4095.0f;
-
-  //   Serial1.print("deg=");
-  //   Serial1.print(deg, 1);
-  //   Serial1.print(" PA3=");
-  //   Serial1.print(v_pa3, 2);
-  //   Serial1.print("V PA7=");
-  //   Serial1.print(v_pa7, 2);
-  //   Serial1.println("V");
-  // }
+  // 可选串口打印，用于调参，取消注释即可
+  /*
+  static unsigned long last_print = 0;
+  if(millis()-last_print >=100){
+    last_print = millis();
+    Serial1.print("vel:");
+    Serial1.print(motor.shaft_velocity,2);
+    Serial1.print(" rad/s, angle:");
+    Serial1.println(motor.shaft_angle,2);
+  }
+  */
 }
