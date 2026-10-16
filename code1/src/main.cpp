@@ -30,8 +30,6 @@ void setup()
   motor.linkDriver(&driver);
 
   // —— 开环速度模式 ——
-  // ponytail: 2V 是经验值。2804 相电阻 2.55Ω → I≈0.78A，超额定 0.5A。
-  //          发热/堵转过流就降到 1.3V；带不动负载再调高，留这把刀。
   motor.voltage_limit = 2.0f;
   motor.controller = MotionControlType::velocity_openloop;
   motor.init();
@@ -67,6 +65,4 @@ void loop()
   //   Serial1.print(v_pa7, 2);
   //   Serial1.println("V");
   // }
-
-  delay(1); // ~1ms 控制周期
 }
