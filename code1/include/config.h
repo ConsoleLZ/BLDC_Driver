@@ -7,12 +7,12 @@
  * 2804 无刷电机(12N14P, 7 对极) + DRV8313 + AS5600 — 上电自动运行 v8（静默版）
  *
  * 已删掉全部串口打印 / 自检 / 噪声测试 / 串口命令解析，只保留控制逻辑。
+ * 启动流程：上电 -> FOC 对齐 -> 直接按斜坡冲到目标转速（无暖机、无预检）。
  * 本文件集中存放全部宏定义与可调参数，改转速 / 引脚只需改这里。
  *
  * 【改转速看这里】
- *   STAGE2_VELOCITY  —— 稳态转速（默认 20.94 rad/s ≈ 200 rpm）★主要改这个
- *   START_VELOCITY   —— 上电头 2 秒的暖机转速（想一步到位就改成和上面一样）
- *   VEL_RAMP         —— 加速度 rad/s²，越大起步越猛
+ *   STAGE2_VELOCITY  —— 目标转速（默认 20.94 rad/s ≈ 200 rpm）★主要改这个
+ *   VEL_RAMP         —— 加速度 rad/s²，越大起步越猛（20.94 / VEL_RAMP ≈ 起转时间）
  *   CLOSED_VOLTAGE   —— 闭环最高输出电压，想更快就得抬高（默认 2.5V）
  *   MAX_VELOCITY     —— 目标速度硬上限
  *
@@ -50,19 +50,15 @@
  */
 #define CLOSED_VOLTAGE      2.5f
 
-#define START_VELOCITY      1.0f       // 暖机段转速 rad/s
-#define STAGE2_VELOCITY     20.94f     // ★稳态转速 rad/s（改这里）
-#define WARMUP_MS           2000.0f    // 暖机段持续时间
+#define STAGE2_VELOCITY     20.94f     // ★目标转速 rad/s（改这里）
 /**
  * 改速度时别忘它得 ≥ 你的目标。另外闭环启动时速度环会按 `STAGE2_VELOCITY` 直接算出 q 轴电压，如果设太大而 `CLOSED_VOLTAGE` 不够，就会卡在限幅上失速
  */
 #define MAX_VELOCITY        40.0f
-#define VEL_RAMP            2.0f
+#define VEL_RAMP            100.0f     // 加速度 rad/s²（100 -> 约 0.2s 到目标转速）
 
 #define STALL_TIME_MS       3000
 #define ALIGN_RETRY         3
-#define PRETEST_MS          800
-#define PRETEST_VELOCITY    1.5f
 
 /* 速度环：J=3.7e-6kg·m²，带宽≈4600·P=230rad/s(37Hz)，PI零点40rad/s */
 #define VEL_P               0.05f
@@ -71,9 +67,6 @@
 
 /* ----------------------------- 内部保护阈值 ------------------------------ */
 #define OPENLOOP_VEL_LIMIT  10.0f      // 开环目标速度限幅 rad/s
-#define ENC_CHECK_SAMPLES   120        // 上电编码器自检采样次数
-#define ENC_CHECK_BAD_MAX   20         // 允许的坏样本数
-#define ENC_CHECK_DELAY_US  400        // 采样间隔 us
 #define ENC_GLITCH_STOP     40         // 闭环中连续误码停机阈值
 #define STALL_VEL_RATIO     0.15f      // 实际转速低于目标的该比例视为堵转
 #define STALL_VEL_MIN       1.0f       // 堵转检测生效的最小目标转速 rad/s

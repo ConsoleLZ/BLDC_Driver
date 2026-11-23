@@ -18,27 +18,10 @@ namespace {
 enum class Mode : uint8_t { IDLE, OPEN_LOOP, CLOSED_LOOP };
 
 Mode     mode        = Mode::IDLE;
-bool     aligned     = false;              // FOC 对齐是否已完成
-bool     i2c_ok      = true;               // 上电编码器总线自检结果
-float    target_set  = START_VELOCITY;     // 目标转速
+float    target_set  = STAGE2_VELOCITY;    // 目标转速
 float    target_now  = 0.0f;               // 斜坡后的实际指令转速
 float    closed_vlim = CLOSED_VOLTAGE;     // 闭环电压上限
 uint32_t stall_ms    = 0;                  // 堵转累计时间
-float    stage_ms    = 0.0f;               // 暖机段累计时间
-uint8_t  stage       = 0;                  // 0=暖机段 1=稳态段
-
-/* 上电自检：统计编码器坏样本数，判断 I2C 是否可信 */
-bool encoderSane()
-{
-  uint32_t bad = 0;
-  for (int i = 0; i < ENC_CHECK_SAMPLES; i++) {
-    sensor.getSensorAngle();
-    if (sensor.currWireError) bad++;
-    delayMicroseconds(ENC_CHECK_DELAY_US);
-  }
-  sensor.clearStats();
-  return bad <= ENC_CHECK_BAD_MAX;
-}
 
 /* 紧急停机：目标清零并关断输出 */
 void stopOutput()
@@ -62,55 +45,26 @@ void startOpenLoop(float v, float vlim)
   mode = Mode::OPEN_LOOP;
 }
 
-/* 开机开环预检：确认功率级和电机接线正常，再停下 */
-void openLoopPretest(float v, uint32_t ms)
-{
-  motor.enable();
-  motor.controller = MotionControlType::velocity_openloop;
-  motor.updateVoltageLimit(OPENLOOP_VOLTAGE);
-  mode = Mode::OPEN_LOOP;
-
-  uint32_t t0 = millis();
-  while (millis() - t0 < ms) {
-    motor.loopFOC();
-    motor.move(v);
-  }
-  motor.disable();
-  delay(300);
-}
-
-/* 进入闭环：编码器不可信则退回开环，否则先对齐再切速度环 */
+/* 进入闭环：先做 FOC 对齐（失败退回开环），再切速度环直接冲目标转速 */
 void startClosedLoop(float v)
 {
-  if (!i2c_ok) {                       // 编码器不可信就只跑开环
+  int ok = 0;
+  for (int i = 0; i < ALIGN_RETRY && !ok; i++) {
+    sensor.clearStats();
+    motor.enable();
+    ok = motor.initFOC();
+    if (!ok) { motor.disable(); delay(300); }
+    if (sensor.glitch > 20) break;
+  }
+  if (!ok) {
     startOpenLoop(STAGE2_VELOCITY, OPENLOOP_VOLTAGE);
     return;
-  }
-
-  if (!aligned) {
-    int ok = 0;
-    for (int i = 0; i < ALIGN_RETRY && !ok; i++) {
-      sensor.clearStats();
-      motor.enable();
-      ok = motor.initFOC();
-      if (!ok) { motor.disable(); delay(500); }
-      if (sensor.glitch > 20) break;
-    }
-    if (!ok) {
-      startOpenLoop(STAGE2_VELOCITY, OPENLOOP_VOLTAGE);
-      return;
-    }
-    aligned = true;
-  } else {
-    motor.enable();
   }
 
   motor.controller = MotionControlType::velocity;
   motor.updateVoltageLimit(closed_vlim);
   motor.PID_velocity.reset();
 
-  stage      = 0;
-  stage_ms   = 0.0f;
   target_set = v;
   target_now = 0.0f;
   mode = Mode::CLOSED_LOOP;
@@ -133,9 +87,6 @@ void motorControlSetup()
     while (true) delay(10);
   }
 
-  /* 静默自检：编码器总线是否可用（约 50ms，无打印） */
-  i2c_ok = encoderSane();
-
   /* 电机环参数 */
   motor.linkDriver(&driver);
   motor.linkSensor(&sensor);
@@ -156,11 +107,9 @@ void motorControlSetup()
   }
   motor.disable();
 
-  /* 开环验证 -> 对齐 -> 闭环 */
-  delay(300);
-  openLoopPretest(PRETEST_VELOCITY, PRETEST_MS);
+  /* 对齐 -> 闭环，中间不做任何预检/暖机 */
   sensor.clearStats();
-  startClosedLoop(START_VELOCITY);
+  startClosedLoop(STAGE2_VELOCITY);
 }
 
 /* ------------------------------ 主循环 ---------------------------------- */
@@ -174,15 +123,6 @@ void motorControlLoop()
   float dt = (now_us - last_us) * 1e-6f;
   last_us = now_us;
   if (dt <= 0.0f || dt > LOOP_DT_MAX) dt = LOOP_DT_DEFAULT;
-
-  /* 暖机 2 秒后升到稳态转速 */
-  if (mode == Mode::CLOSED_LOOP && stage == 0) {
-    stage_ms += dt * 1000.0f;
-    if (stage_ms > WARMUP_MS) {
-      stage = 1;
-      target_set = STAGE2_VELOCITY;
-    }
-  }
 
   /* 闭环按加速度斜坡逼近目标，开环直接跟随 */
   if (mode == Mode::CLOSED_LOOP) {
