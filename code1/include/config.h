@@ -51,7 +51,7 @@
  */
 #define CLOSED_VOLTAGE 2.5f
 
-#define STAGE2_VELOCITY 20.94f // ★目标转速 rad/s（改这里）
+#define STAGE2_VELOCITY 50.0f // ★目标转速 rad/s（改这里）
 /**
  * 改速度时别忘它得 ≥ 你的目标。另外闭环启动时速度环会按 `STAGE2_VELOCITY` 直接算出 q 轴电压，如果设太大而 `CLOSED_VOLTAGE` 不够，就会卡在限幅上失速
  */
