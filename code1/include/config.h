@@ -72,7 +72,7 @@
  * 之后 initFOC() 会跳过全部对齐动作，上电零抖动、立即加速到目标转速。
  * ----------------------------------------------------------------------*/
 #define ALIGN_CALIBRATE 0
-#define MOTOR_ZERO_ELECTRIC_ANGLE 1.1f // rad，填标定输出的 ZERO
+#define MOTOR_ZERO_ELECTRIC_ANGLE 0.4f // rad，填标定输出的 ZERO
 #define MOTOR_SENSOR_DIRECTION -1      // 1=CW，-1=CCW，填标定输出的 DIR
 
 /* 速度环：J=3.7e-6kg·m²，带宽≈4600·P=230rad/s(37Hz)，PI零点40rad/s */
