@@ -45,21 +45,38 @@ void startOpenLoop(float v, float vlim)
   mode = Mode::OPEN_LOOP;
 }
 
-/* 进入闭环：先做 FOC 对齐（失败退回开环），再切速度环直接冲目标转速 */
+/* 进入闭环：标定模式下做完整对齐并打印参数；正常模式直接注入标定值，
+ * initFOC() 会跳过正反扫掠，上电不产生任何对齐动作 */
 void startClosedLoop(float v)
 {
-  int ok = 0;
-  for (int i = 0; i < ALIGN_RETRY && !ok; i++) {
-    sensor.clearStats();
-    motor.enable();
-    ok = motor.initFOC();
-    if (!ok) { motor.disable(); delay(300); }
-    if (sensor.glitch > 20) break;
-  }
-  if (!ok) {
+  sensor.clearStats();
+  motor.enable();
+
+#if ALIGN_CALIBRATE
+  /* 一次性标定：完整对齐 + 串口输出 */
+  Serial1.begin(115200);
+  if (!motor.initFOC()) {
+    motor.disable();
     startOpenLoop(STAGE2_VELOCITY, OPENLOOP_VOLTAGE);
     return;
   }
+  Serial1.print("[CAL] ZERO=");
+  Serial1.println(motor.zero_electric_angle, 5);
+  Serial1.print("[CAL] DIR=");
+  Serial1.println((int)motor.sensor_direction);
+  Serial1.println("[CAL] 填入 config.h 后把 ALIGN_CALIBRATE 改为 0 重新烧录");
+#else
+  /* 注入标定值，跳过方向扫描与零电角标定 */
+  motor.zero_electric_angle = MOTOR_ZERO_ELECTRIC_ANGLE;
+  motor.sensor_direction =
+      (MOTOR_SENSOR_DIRECTION >= 0) ? Direction::CW : Direction::CCW;
+
+  if (!motor.initFOC()) {
+    motor.disable();
+    startOpenLoop(STAGE2_VELOCITY, OPENLOOP_VOLTAGE);
+    return;
+  }
+#endif
 
   motor.controller = MotionControlType::velocity;
   motor.updateVoltageLimit(closed_vlim);
