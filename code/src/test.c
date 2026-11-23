@@ -215,8 +215,8 @@ void test_vector(void)
     uint8_t idx = (uint8_t)((uint32_t)e_angle * SIN_TABLE_SIZE / PWM_PERIOD);
 
 
-    // 设置idx和offset都是0，然后读取此时的电角度(uint8_t)((uint32_t)e_angle * SIN_TABLE_SIZE / PWM_PERIOD)这个值是145，使用256-145+64得到offset
-    uint16_t offset = 175;
+    // 电角度大概偏移22.9° ，使用256-16-64得到offset
+    uint16_t offset = 176;
 
     U_Enable;
     V_Enable;
