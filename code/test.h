@@ -35,7 +35,6 @@ extern uint16_t speed_duty; // 当前速度, 软起动用
 
 extern int16_t sin_table[];
 
-void IO_Init(void);
 void test1(void);
 void test2(void);
 void test3(void);

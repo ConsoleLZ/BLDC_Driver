@@ -3,25 +3,6 @@
 #include "as5600.h"
 #include "timer.h"
 
-void IO_Init(void)
-{
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-
-    // GPIOA->CRL &= ~GPIO_CRL_CNF0;
-    // GPIOA->CRL |= GPIO_CRL_MODE0;
-    // GPIOA->CRL &= ~GPIO_CRL_CNF1;
-    // GPIOA->CRL |= GPIO_CRL_MODE1;
-    // GPIOA->CRL &= ~GPIO_CRL_CNF2;
-    // GPIOA->CRL |= GPIO_CRL_MODE2;
-
-    GPIOA->CRL &= ~GPIO_CRL_CNF4;
-    GPIOA->CRL |= GPIO_CRL_MODE4;
-    GPIOA->CRL &= ~GPIO_CRL_CNF5;
-    GPIOA->CRL |= GPIO_CRL_MODE5;
-    GPIOA->CRL &= ~GPIO_CRL_CNF6;
-    GPIOA->CRL |= GPIO_CRL_MODE6;
-}
-
 void test1(void)
 {
     static uint8_t step;
