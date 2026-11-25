@@ -6,9 +6,9 @@
 #define SIN_TABLE_SIZE 256
 
 #define E_ANGLE_OFFSET 2040 // 电角度偏移值, 设置idx为0，打印的(uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD)的值
-#define MOVE_OFFSET 64 // 固定90度的偏移值，只有受力方向与转子90度垂直，才能拉着电机旋转，且没有额外的分立做其它功
+#define MOVE_OFFSET 64 // 固定90度的偏移值，只有受力方向与转子90度垂直，才能拉着电机旋转，且没有额外的分力做其它功
 
-#define SPEED_DUTY 600 // 目标速度
+#define SPEED_DUTY 100 // 目标速度,这里应该是由于as5600的读取速率的限制，速度上限会被限制，因为速度越快，对应读取角度的速度也要越快，可以考虑使用其它角度编码器，SPI通讯的可以提高读取速度
 #define SPEED_RAMP_STEP 2 // 软起动每ms增量, 调大=加速起, 调小=更软
 extern uint16_t speed_duty; // 当前速度, 软起动用
 
