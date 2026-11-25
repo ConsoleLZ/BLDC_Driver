@@ -6,6 +6,7 @@
 #define SIN_TABLE_SIZE 256
 
 #define E_ANGLE_OFFSET 2040 // 电角度偏移值, 设置idx为0，打印的(uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD)的值
+#define MOVE_OFFSET 64 // 固定90度的偏移值，只有受力方向与转子90度垂直，才能拉着电机旋转，且没有额外的分立做其它功
 
 #define SPEED_DUTY 600 // 目标速度
 #define SPEED_RAMP_STEP 2 // 软起动每ms增量, 调大=加速起, 调小=更软

@@ -239,7 +239,7 @@ void test_vector(void)
     V_Enable;
     W_Enable;
 
-    TIM2->CCR1 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_U) % SIN_TABLE_SIZE], speed_duty);
-    TIM2->CCR2 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_V) % SIN_TABLE_SIZE], speed_duty);
-    TIM2->CCR3 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_W) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR1 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_U + MOVE_OFFSET) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_V + MOVE_OFFSET) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_W + MOVE_OFFSET) % SIN_TABLE_SIZE], speed_duty);
 }
