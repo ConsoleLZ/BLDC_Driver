@@ -22,8 +22,8 @@
 #define W_Disable GPIOA->ODR &= ~GPIO_ODR_ODR6
 
 typedef struct {
-    int16_t Ix; // 静止的二维坐标系的x轴的值，将三相电压通过clark变化后得到
-    int16_t Iy; // 静止的二维坐标系的y轴的值，将三相电压通过clark变化后得到
+    float Ix; // 静止的二维坐标系的x轴的值，将三相电压通过clark变化后得到
+    float Iy; // 静止的二维坐标系的y轴的值，将三相电压通过clark变化后得到
 } FOC_COORDINATES;
 
 void FOC_Work(void);
