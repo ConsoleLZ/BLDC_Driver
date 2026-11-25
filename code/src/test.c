@@ -170,7 +170,7 @@ void sin_generate(int16_t *sin_table, uint16_t table_size)
     // 注意：如果单片机空间不够用，这里最好是减少步长的精度，因为这里会生成一个大数组
     // 由于浮点单片机不好算，这里转换成整型去算
     const int16_t cosd = 32758; /* 0.999699 * 32768 */
-    const int16_t sind = 803;    /* 0.024531 * 32768 */
+    const int16_t sind = 803;   /* 0.024531 * 32768 */
 
     // 初始时的x为0°
     int16_t sinx = 0;
@@ -189,8 +189,8 @@ void sin_generate(int16_t *sin_table, uint16_t table_size)
     }
 
     /* 强制修正关键点, 消除256步累计误差: 0°/90°/180°/270° */
-    sin_table[0]   = 0;
-    sin_table[64]  = 32767;
+    sin_table[0] = 0;
+    sin_table[64] = 32767;
     sin_table[128] = 0;
     sin_table[192] = -32767;
 }
@@ -203,26 +203,43 @@ uint16_t sin_to_pwm(int16_t sin, uint16_t amplitude)
 {
     /* sin∈[-32767,32767] -> duty = PWM_PERIOD/2 ± amplitude, 中心对齐SPWM */
     int32_t duty = (PWM_PERIOD / 2) + (((int32_t)sin * amplitude) / 32768);
-    if (duty < 0) duty = 0;
-    if (duty >= PWM_PERIOD) duty = PWM_PERIOD - 1;
+    if (duty < 0)
+        duty = 0;
+    if (duty >= PWM_PERIOD)
+        duty = PWM_PERIOD - 1;
     return (uint16_t)duty;
+}
+
+// 通过固定电角度偏移重新计算电角度
+uint16_t e_angle_generate(uint16_t e_angle, uint16_t offset)
+{
+    uint16_t new_angle;
+
+    if (e_angle >= offset)
+    {
+        new_angle = e_angle - offset;
+    }
+    else
+    {
+        new_angle = PWM_PERIOD - (offset - e_angle);
+    }
+
+    return new_angle;
 }
 
 void test_vector(void)
 {
     uint16_t angle = AS5600_ReadAngle();
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD);
+    
+    e_angle = e_angle_generate(e_angle, E_ANGLE_OFFSET);
     uint8_t idx = (uint8_t)((uint32_t)e_angle * SIN_TABLE_SIZE / PWM_PERIOD);
-
-
-    // 电角度大概偏移22.9° ，使用256-16-64得到offset
-    uint16_t offset = 176;
 
     U_Enable;
     V_Enable;
     W_Enable;
 
-    TIM2->CCR1 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_U + offset) % SIN_TABLE_SIZE], speed_duty);
-    TIM2->CCR2 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_V + offset) % SIN_TABLE_SIZE], speed_duty);
-    TIM2->CCR3 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_W + offset) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR1 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_U) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR2 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_V) % SIN_TABLE_SIZE], speed_duty);
+    TIM2->CCR3 = sin_to_pwm(sin_table[(uint8_t)(idx + IDX_OFF_W) % SIN_TABLE_SIZE], speed_duty);
 }
