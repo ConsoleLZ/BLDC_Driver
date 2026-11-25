@@ -50,8 +50,8 @@ void Clark_Reverse(void)
     float Ibeta = foc_coordinates.Iy;
 
     float Ia = Ialpha;
-    float Ib = -0.5f * Ialpha + SQRT3_2 * Ibeta;
-    float Ic = -0.5f * Ialpha - SQRT3_2 * Ibeta;
+    float Ib = -0.5f * Ialpha - SQRT3_2 * Ibeta;
+    float Ic = -0.5f * Ialpha + SQRT3_2 * Ibeta;
 
     // 叠加偏置，映射到 PWM 计数区间
     float ccr_a = Ia + OFFSET;
