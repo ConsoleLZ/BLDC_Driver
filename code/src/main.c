@@ -3,9 +3,9 @@
 #include "timer.h"
 #include "utils.h"
 #include "iic.h"
-#include "test.h"
 #include "adc.h"
 #include <stdio.h>
+#include "foc.h"
 
 volatile uint16_t sysCnt;
 
@@ -19,6 +19,25 @@ void TIM4_IRQHandler(void)
     }
 }
 
+void IO_Init(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+
+    // GPIOA->CRL &= ~GPIO_CRL_CNF0;
+    // GPIOA->CRL |= GPIO_CRL_MODE0;
+    // GPIOA->CRL &= ~GPIO_CRL_CNF1;
+    // GPIOA->CRL |= GPIO_CRL_MODE1;
+    // GPIOA->CRL &= ~GPIO_CRL_CNF2;
+    // GPIOA->CRL |= GPIO_CRL_MODE2;
+
+    GPIOA->CRL &= ~GPIO_CRL_CNF4;
+    GPIOA->CRL |= GPIO_CRL_MODE4;
+    GPIOA->CRL &= ~GPIO_CRL_CNF5;
+    GPIOA->CRL |= GPIO_CRL_MODE5;
+    GPIOA->CRL &= ~GPIO_CRL_CNF6;
+    GPIOA->CRL |= GPIO_CRL_MODE6;
+}
+
 int main(void)
 {
     USART_Init1();
@@ -27,18 +46,15 @@ int main(void)
     IIC_Init();
     IO_Init();
     ADC1_Init();
-    sin_generate(sin_table, SIN_TABLE_SIZE);
 
     while (1)
     {
         if (sysCnt >= 10)
         {
             sysCnt = 0;
-            if (speed_duty < SPEED_DUTY)
-                speed_duty += SPEED_RAMP_STEP; // 软起动爬坡, ~750ms到顶
-
-            test_vector();
         }
+
+        FOC_Work();
     }
 
     return 0;

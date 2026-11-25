@@ -1,15 +1,23 @@
 #ifndef __FOC_H_
 #define __FOC_H_
 #include <stm32f10x.h>
+#include "timer.h"
+
+#define E_ANGLE_OFFSET 2040 // 电角度偏移值, 设置idx为0，打印的(uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD)的值
+
+#define SQRT3_2     0.8660254f   // sqrt(3)/2
+#define OFFSET      (PWM_PERIOD / 2.0f)
 
 #define POLE_PAIRS 7 // 电机的极对数
 
-#define Iq 100 // 垂直于转子的力，值越大旋转速度越快
+#define Iq 10 // 垂直于转子的力，值越大旋转速度越快
 #define Id 0 // 与转子反向重合，值越大发热越多。也就是部分电流用来发热了
 
 typedef struct {
     int16_t Ix; // 静止的二维坐标系的x轴的值，将三相电压通过clark变化后得到
     int16_t Iy; // 静止的二维坐标系的y轴的值，将三相电压通过clark变化后得到
 } FOC_COORDINATES;
+
+void FOC_Work(void);
 
 #endif
