@@ -72,6 +72,10 @@ void Clark_Reverse(void)
     if (ccr_c > (PWM_PERIOD - 1))
         ccr_c = PWM_PERIOD - 1;
 
+    U_Enable;
+    V_Enable;
+    W_Enable;
+
     // 输出到 TIM2 通道：PA0 CH1, PA1 CH2, PA2 CH3
     TIM2->CCR1 = (uint16_t)ccr_a;
     TIM2->CCR2 = (uint16_t)ccr_b;

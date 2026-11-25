@@ -52,9 +52,8 @@ int main(void)
         if (sysCnt >= 10)
         {
             sysCnt = 0;
+            FOC_Work();
         }
-
-        FOC_Work();
     }
 
     return 0;
