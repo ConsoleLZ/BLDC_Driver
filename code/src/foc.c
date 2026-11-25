@@ -1,6 +1,7 @@
 #include "foc.h"
 #include <math.h>
 #include "as5600.h"
+#include "usart.h"
 
 FOC_COORDINATES foc_coordinates;
 
@@ -11,16 +12,16 @@ uint16_t AS5600_ReadEAngle(void)
     uint16_t e_angle = (uint16_t)((angle * POLE_PAIRS) % PWM_PERIOD);
     uint16_t new_angle;
 
-    if (e_angle >= E_ANGLE_OFFSET)
-    {
-        new_angle = e_angle - E_ANGLE_OFFSET;
-    }
-    else
-    {
-        new_angle = PWM_PERIOD - (E_ANGLE_OFFSET - e_angle);
-    }
+    // if (e_angle >= E_ANGLE_OFFSET)
+    // {
+    //     new_angle = e_angle - E_ANGLE_OFFSET;
+    // }
+    // else
+    // {
+    //     new_angle = PWM_PERIOD - (E_ANGLE_OFFSET - e_angle);
+    // }
 
-    return new_angle;
+    return e_angle;
 }
 
 /**
@@ -86,4 +87,9 @@ void FOC_Work(void)
 {
     Park_Reverse();
     Clark_Reverse();
+
+    uint16_t offset = AS5600_ReadEAngle();
+    USART_Send_Byte(0xFC);
+    USART_Send_Byte(offset >> 8);
+    USART_Send_Byte(offset & 0xff);
 }
