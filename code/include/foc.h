@@ -3,7 +3,7 @@
 #include <stm32f10x.h>
 #include "timer.h"
 
-#define E_ANGLE_OFFSET 2040 // 电角度偏移值
+#define E_ANGLE_OFFSET 2940 // 电角度偏移值
 
 #define SQRT3_2     0.8660254f   // sqrt(3)/2
 #define OFFSET      (PWM_PERIOD / 2.0f)
