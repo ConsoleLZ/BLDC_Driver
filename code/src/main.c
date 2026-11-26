@@ -49,10 +49,14 @@ int main(void)
 
     while (1)
     {
-        if (sysCnt >= 10)
+        if (sysCnt >= 100)
         {
             sysCnt = 0;
-            FOC_Work();
+            uint16_t offset = FOC_CalibrateAngleOffset();
+            USART_Send_Byte(0xFC);
+            USART_Send_Byte(offset >> 8);
+            USART_Send_Byte(offset);
+            // FOC_Work();
         }
     }
 
