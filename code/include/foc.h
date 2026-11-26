@@ -3,7 +3,7 @@
 #include <stm32f10x.h>
 #include "timer.h"
 
-// #define E_ANGLE_OFFSET 1560 // 电角度偏移值
+// #define E_ANGLE_OFFSET 2040 // 电角度偏移值
 
 #define SQRT3_2     0.8660254f   // sqrt(3)/2
 #define OFFSET      (PWM_PERIOD / 2.0f)
@@ -11,7 +11,7 @@
 #define POLE_PAIRS 7 // 电机的极对数
 
 #define Iq 0.0f // 垂直于转子的力，值越大旋转速度越快
-#define Id 100.0f // 与转子反向重合，值越大发热越多。也就是部分电流用来发热了
+#define Id 200.0f // 与转子反向重合，值越大发热越多。也就是部分电流用来发热了
 
 #define U_Enable GPIOA->ODR |= GPIO_ODR_ODR4
 #define V_Enable GPIOA->ODR |= GPIO_ODR_ODR5
