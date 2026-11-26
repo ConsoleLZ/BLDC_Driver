@@ -49,7 +49,7 @@ int main(void)
 
     while (1)
     {
-        if (sysCnt >= 100)
+        if (sysCnt >= 10)
         {
             sysCnt = 0;
             FOC_Work();
