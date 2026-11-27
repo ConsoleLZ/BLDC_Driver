@@ -17,9 +17,10 @@ uint8_t AS5600_TryReadRawAngle(uint16_t *raw_angle);
 // 读取角度并转换为度数 (0-3599, 表示0.0-359.9度)
 uint16_t AS5600_ReadAngle(void);
 
-/*
- * 获取当前转速
- *
+/**
+ * @brief 获取当前转速
+ * @return float 转速，单位 RPM，正数表示原始角度递增方向
+ * 这个算法的前提是：相邻两次采样之间，机械转角绝对值一定小于半圈（2048 count）。
  */
 float AS5600_GetSpeedRPM(void);
 

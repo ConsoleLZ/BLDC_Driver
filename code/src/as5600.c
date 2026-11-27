@@ -73,6 +73,7 @@ static float s_speed_rpm = 0.0f;     // 最近一次算出的平均转速
 /**
  * @brief 获取当前转速
  * @return float 转速，单位 RPM，正数表示原始角度递增方向
+ * 这个算法的前提是：相邻两次采样之间，机械转角绝对值一定小于半圈（2048 count）。
  */
 float AS5600_GetSpeedRPM(void)
 {
