@@ -192,8 +192,8 @@ void Park_Reverse(void)
     float cos_a = cosf(rad);
     float sin_a = sinf(rad);
 
-    foc_coordinates.Ix = Id * cos_a - Iq * sin_a;
-    foc_coordinates.Iy = Iq * cos_a + Id * sin_a;
+    foc_coordinates.Ix = Id * cos_a - foc_coordinates.Iq * sin_a;
+    foc_coordinates.Iy = foc_coordinates.Iq * cos_a + Id * sin_a;
 }
 
 /**
@@ -241,6 +241,7 @@ void Clark_Reverse(void)
 // 速度PID
 void Speed_PID(void)
 {
+    float deviation; // 转速误差
 }
 
 void FOC_Work(void)

@@ -12,7 +12,6 @@
 
 #define target_speed 300 // 目标转速
 
-#define Iq 500.0f  // 垂直于转子的力，值越大旋转速度越快
 #define Id 0.0f    // 与转子反向重合，值越大发热越多。也就是部分电流用来发热了
 
 // 校准用的对齐电流（较大的Id值，确保转子能被拉入对齐位置）
@@ -29,6 +28,7 @@
 typedef struct {
     float Ix; // 静止的二维坐标系的x轴的值，将三相电压通过clark变化后得到
     float Iy; // 静止的二维坐标系的y轴的值，将三相电压通过clark变化后得到
+    float Iq; // 垂直于转子的力，值越大旋转速度越快
 } FOC_COORDINATES;
 
 void FOC_Work(void);
