@@ -1,5 +1,5 @@
-#ifndef IIC_H
-#define IIC_H
+#ifndef __IIC_H_
+#define __IIC_H_
 #include <stm32f10x.h>
 
 // 初始化
