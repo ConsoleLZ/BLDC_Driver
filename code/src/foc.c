@@ -2,6 +2,7 @@
 #include <math.h>
 #include "as5600.h"
 #include "usart.h"
+#include "main.h"
 
 FOC_COORDINATES foc_coordinates;
 
@@ -241,7 +242,17 @@ void Clark_Reverse(void)
 // 速度PID
 void Speed_PID(void)
 {
-    float deviation; // 转速误差
+    float deviation;
+    static float deviation_i = 0.0f;
+
+    deviation = target_speed - app.rpm;
+    deviation_i += deviation;
+
+    // 记得加积分限幅，防止积分饱和
+    if(deviation_i > 100.0f) deviation_i = 100.0f;
+    if(deviation_i < -100.0f) deviation_i = -100.0f;
+
+    foc_coordinates.Iq = 5.0f * deviation + 0.1f * deviation_i;
 }
 
 void FOC_Work(void)
