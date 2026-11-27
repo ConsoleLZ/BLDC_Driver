@@ -6,8 +6,10 @@
 #include "adc.h"
 #include <stdio.h>
 #include "foc.h"
+#include "as5600.h"
 
 volatile uint16_t sysCnt;
+volatile uint16_t _1sCnt;
 
 // 100us中断一次
 void TIM4_IRQHandler(void)
@@ -16,6 +18,7 @@ void TIM4_IRQHandler(void)
     {
         TIM4->SR &= ~TIM_SR_UIF;
         sysCnt++;
+        _1sCnt++;
     }
 }
 
@@ -40,6 +43,9 @@ void IO_Init(void)
 
 int main(void)
 {
+    uint8_t speedDiv = 0;  // 测速分频：每 10 个控制周期(约10ms)取一次
+    float rpm = 0.0f;
+
     USART_Init1();
     Timer2_Init();
     Timer4_Init();
@@ -53,6 +59,19 @@ int main(void)
         {
             sysCnt = 0;
             FOC_Work();
+
+            // 测速函数必须 10~20ms 调用一次：调用间隔内转角超过半圈会判错方向
+            if (++speedDiv >= 10)
+            {
+                speedDiv = 0;
+                rpm = AS5600_GetSpeedRPM();
+            }
+        }
+
+        if (_1sCnt >= 10000)
+        {
+            _1sCnt = 0;
+            printf("rpm: %.2f\n", rpm);
         }
     }
 
