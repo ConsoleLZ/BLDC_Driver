@@ -5,24 +5,31 @@ uint8_t AS5600_TryReadRawAngle(uint16_t *raw_angle)
 {
     uint8_t high, low;
 
-    if (!IIC_Start()) goto error;
+    if (!IIC_Start())
+        goto error;
 
-    if (!IIC_SendAddr(AS5600_ADDR << 1)) goto error;
+    if (!IIC_SendAddr(AS5600_ADDR << 1))
+        goto error;
 
-    if (!IIC_SendByte(AS5600_RAW_ANGLE_HIGH)) goto error;
+    if (!IIC_SendByte(AS5600_RAW_ANGLE_HIGH))
+        goto error;
 
-    if (!IIC_Start()) goto error;
+    if (!IIC_Start())
+        goto error;
 
     /* F1 必须在清除读地址的 ADDR 标志前打开 ACK，否则首字节可能被 NACK。 */
     IIC_Ack();
 
-    if (!IIC_SendAddr((AS5600_ADDR << 1) | 0x01)) goto error;
+    if (!IIC_SendAddr((AS5600_ADDR << 1) | 0x01))
+        goto error;
 
-    if (!IIC_ReadByte(&high)) goto error;
+    if (!IIC_ReadByte(&high))
+        goto error;
 
     IIC_Nck();
 
-    if (!IIC_ReadByte(&low)) goto error;
+    if (!IIC_ReadByte(&low))
+        goto error;
 
     IIC_Stop();
 
@@ -51,17 +58,17 @@ uint16_t AS5600_ReadAngle(void)
 
 /* ===== 转速测量 ===== */
 
-#define AS5600_COUNTS_PER_REV   4096        // 编码器一圈的计数
-#define AS5600_HALF_REV_COUNTS  2048        // 半圈计数，用于判断环形过零方向
-#define AS5600_SPEED_WINDOW_MS  1000U       // 测速窗口
+#define AS5600_COUNTS_PER_REV 4096   // 编码器一圈的计数
+#define AS5600_HALF_REV_COUNTS 2048  // 半圈计数，用于判断环形过零方向
+#define AS5600_SPEED_WINDOW_MS 1000U // 测速窗口
 
-static uint16_t s_last_raw = 0;       // 上一次采样的原始角度
-static uint32_t s_last_cycle = 0;     // 上一次采样时的 DWT 周期计数
-static uint8_t  s_has_last = 0;       // 是否已有上一次采样
-static uint32_t s_win_cycle_max = 0;  // 一个测速窗口对应的周期数
-static uint32_t s_win_cycle = 0;      // 当前窗口已累计的周期数
-static int32_t  s_win_counts = 0;     // 当前窗口已累计的角度计数
-static float    s_speed_rpm = 0.0f;   // 最近一次算出的平均转速
+static uint16_t s_last_raw = 0;      // 上一次采样的原始角度
+static uint32_t s_last_cycle = 0;    // 上一次采样时的 DWT 周期计数
+static uint8_t s_has_last = 0;       // 是否已有上一次采样
+static uint32_t s_win_cycle_max = 0; // 一个测速窗口对应的周期数
+static uint32_t s_win_cycle = 0;     // 当前窗口已累计的周期数
+static int32_t s_win_counts = 0;     // 当前窗口已累计的角度计数
+static float s_speed_rpm = 0.0f;     // 最近一次算出的平均转速
 
 /**
  * @brief 获取当前转速
