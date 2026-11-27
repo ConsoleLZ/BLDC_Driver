@@ -64,7 +64,7 @@ int main(void)
         if (_1sCnt >= 10000)
         {
             _1sCnt = 0;
-            printf("rpm: %.2f\n", app.rpm);
+            // printf("rpm: %.2f\n", app.rpm);
         }
     }
 

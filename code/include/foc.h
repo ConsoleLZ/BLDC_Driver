@@ -10,8 +10,7 @@
 
 #define POLE_PAIRS 7 // 电机的极对数
 
-// 运行时电角度偏移值，校准后由 FOC_CalibrateAngleOffset() 更新
-extern uint16_t g_e_angle_offset;
+#define target_speed 300 // 目标转速
 
 #define Iq 500.0f  // 垂直于转子的力，值越大旋转速度越快
 #define Id 0.0f    // 与转子反向重合，值越大发热越多。也就是部分电流用来发热了

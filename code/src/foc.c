@@ -21,7 +21,7 @@ static void Calibrate_DelayMs(uint32_t ms)
 
 /**
  * @brief 校准专用的 Park 反变换（角度强制为 0）
- * 
+ *
  * 校准时我们假定电角度 = 0，这样施加的 Id 电流就是沿"假定的 d 轴"方向。
  * 电流产生的磁场会把转子吸附到这个方向。
  */
@@ -53,12 +53,18 @@ static void Clark_Reverse_Output(void)
     float ccr_c = Ic + OFFSET;
 
     // 限幅，防止溢出
-    if (ccr_a < 0) ccr_a = 0;
-    if (ccr_a > (PWM_PERIOD - 1)) ccr_a = PWM_PERIOD - 1;
-    if (ccr_b < 0) ccr_b = 0;
-    if (ccr_b > (PWM_PERIOD - 1)) ccr_b = PWM_PERIOD - 1;
-    if (ccr_c < 0) ccr_c = 0;
-    if (ccr_c > (PWM_PERIOD - 1)) ccr_c = PWM_PERIOD - 1;
+    if (ccr_a < 0)
+        ccr_a = 0;
+    if (ccr_a > (PWM_PERIOD - 1))
+        ccr_a = PWM_PERIOD - 1;
+    if (ccr_b < 0)
+        ccr_b = 0;
+    if (ccr_b > (PWM_PERIOD - 1))
+        ccr_b = PWM_PERIOD - 1;
+    if (ccr_c < 0)
+        ccr_c = 0;
+    if (ccr_c > (PWM_PERIOD - 1))
+        ccr_c = PWM_PERIOD - 1;
 
     // 开启三相使能
     U_Enable;
@@ -110,7 +116,7 @@ uint16_t AS5600_ReadEAngle(void)
 
 /**
  * @brief 电机电角度校准函数
- * 
+ *
  * 工作流程：
  *   1. 关闭 PWM，让电机自由静止
  *   2. 假定电角度 = 0，施加 Id = ALIGN_ID_CURRENT 的对齐电流
@@ -119,12 +125,12 @@ uint16_t AS5600_ReadEAngle(void)
  *   4. 多次读取编码器原始角度取平均，转换为电角度
  *   5. 该电角度即为"真正电角度为 0 时编码器读到的值" = 偏移值
  *   6. 关闭电流，更新全局偏移变量
- * 
+ *
  * 注意事项：
  *   - 校准过程中电机会发热，Id 值不要过大，时间不要过长
  *   - 确保机械负载较轻（或空载），转子能被顺利拉动
  *   - 首次上电或更换电机后应执行一次校准
- * 
+ *
  * @return uint16_t 电角度偏移值 (范围: 0 ~ PWM_PERIOD-1)
  */
 uint16_t FOC_CalibrateAngleOffset(void)
@@ -230,6 +236,11 @@ void Clark_Reverse(void)
     TIM2->CCR1 = (uint16_t)ccr_a;
     TIM2->CCR2 = (uint16_t)ccr_b;
     TIM2->CCR3 = (uint16_t)ccr_c;
+}
+
+// 速度PID
+void Speed_PID(void)
+{
 }
 
 void FOC_Work(void)
